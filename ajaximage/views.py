@@ -39,7 +39,7 @@ def _handle_upload(file_, upload_to, return_type_icon=True):
                 os.path.exists(os.path.join(settings.STATIC_ROOT, 'ajaximage', 'img', "%s.png" % ext[1:]))):
                 url = "%s/ajaximage/img/%s.png" % (settings.STATIC_URL, ext[1:])
         else:
-            url = "%s/ajaximage/img/generic.png" % (settings.STATIC_URL, ext[1:])
+            url = "%s/ajaximage/img/generic.png" % settings.STATIC_URL
 
     if PREPEND_MEDIA_URL:
         filename = file_url
