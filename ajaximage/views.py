@@ -33,15 +33,13 @@ def _handle_upload(file_, upload_to, return_type_icon=True):
     file_url = os.path.join(settings.MEDIA_URL, file_path)
 
     url = file_url
-    print return_type_icon
     if return_type_icon:
         root, ext = os.path.splitext(file_path)
-        print root, ext
-        final = os.path.join(settings.STATIC_ROOT, 'ajaximage', 'img', "%s.png" % ext[1:])
-        print final
         if (ext and
                 os.path.exists(os.path.join(settings.STATIC_ROOT, 'ajaximage', 'img', "%s.png" % ext[1:]))):
                 url = "%s/ajaximage/img/%s.png" % (settings.STATIC_URL, ext[1:])
+        else:
+            url = "%s/ajaximage/img/generic.png" % (settings.STATIC_URL, ext[1:])
 
     if PREPEND_MEDIA_URL:
         filename = file_url
