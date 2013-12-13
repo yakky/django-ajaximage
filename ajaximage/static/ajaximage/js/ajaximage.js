@@ -15,9 +15,11 @@ $ajaxImage(function(){
         
         var regex = /jpg|jpeg|png|gif/i
         
-        if( ! regex.test(data.files[0].type)){
-          $ajaxImage(el).attr('class', 'ajaximage form-active')
-          return alert('Incorrect image format. Allowed (jpg, gif, png).')
+        if ($ajaxImage(el).data('type') == 'image') {
+          if( ! regex.test(data.files[0].type)){
+            $ajaxImage(el).attr('class', 'ajaximage form-active')
+            return alert('Incorrect image format. Allowed (jpg, gif, png).')
+          }
         }
 
         data.submit()
