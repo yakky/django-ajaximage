@@ -1,16 +1,30 @@
+from django.utils.encoding import smart_text, force_unicode
 import os
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.forms import widgets
 from django.utils.safestring import mark_safe
-from django.core.urlresolvers import reverse
-from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 
 from .settings import PREPEND_MEDIA_URL
 
-HTML = """
+HTML_IMG = u"""
 <div class="ajaximage" data-type="{type}" data-url="{upload_url}">
     <a class="link" target="_blank" href="{file_url}"><img src="{file_url}"></a>
-    <a class="remove" href="#remove">Remove</a>
+    <a class="remove" href="#remove">{remove_label}</a>
+    <input type="hidden" value="{file_path}" id="{element_id}" name="{name}" />
+    <input type="file" class="fileinput" />
+    <div class="progress progress-striped active">
+        <div class="bar"></div>
+    </div>
+</div>
+"""
+
+HTML_TEXT = u"""
+<div class="ajaximage" data-type="{type}" data-url="{upload_url}">
+    <span class="text_file">{file_url}</span>
+    <a class="remove" href="#remove">{remove_label}</a>
     <input type="hidden" value="{file_path}" id="{element_id}" name="{name}" />
     <input type="file" class="fileinput" />
     <div class="progress progress-striped active">
@@ -24,6 +38,8 @@ class AjaxFileEditor(widgets.TextInput):
     upload_url = 'ajaxfile'
     kwargs = {}
     type = 'file'
+    template = HTML_TEXT
+    remove_label = _(u'Remove')
 
     class Media:
         js = (
@@ -42,6 +58,7 @@ class AjaxFileEditor(widgets.TextInput):
 
     def __init__(self, *args, **kwargs):
         self.upload_to = kwargs.pop('upload_to', '')
+        self.show_icon = kwargs.pop('show_icon', False)
         self.kwargs = {'upload_to': self.upload_to}
         super(AjaxFileEditor, self).__init__(*args, **kwargs)
 
@@ -58,13 +75,18 @@ class AjaxFileEditor(widgets.TextInput):
 
         file_name = os.path.basename(file_url)
 
-        output = HTML.format(upload_url=upload_url,
-                             file_url=file_url,
-                             file_name=file_name,
-                             file_path=file_path,
-                             element_id=element_id,
-                             type=self.type,
-                             name=name)
+        if self.show_icon:
+            template = HTML_IMG
+        else:
+            template = self.template
+        output = template.format(upload_url=upload_url,
+                                 file_url=file_url,
+                                 file_name=file_name,
+                                 file_path=file_path,
+                                 element_id=element_id,
+                                 remove_label=force_unicode(self.remove_label),
+                                 type=self.type,
+                                 name=name)
 
         return mark_safe(unicode(output))
 
@@ -72,6 +94,7 @@ class AjaxFileEditor(widgets.TextInput):
 class AjaxImageEditor(AjaxFileEditor):
     upload_url = 'ajaximage'
     type = 'image'
+    template = HTML_IMG
 
     def __init__(self, *args, **kwargs):
         self.upload_to = kwargs.pop('upload_to', '')

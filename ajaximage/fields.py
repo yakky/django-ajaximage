@@ -6,10 +6,18 @@ from .widgets import AjaxImageEditor, AjaxFileEditor
 
 
 class AjaxFileField(Field):
+    result_image = None
+    return_type_icon = False
+
     def __init__(self, *args, **kwargs):
         upload_to = kwargs.pop('upload_to', '')
-
-        self.widget = AjaxFileEditor(upload_to=upload_to)
+        self.result_image = kwargs.pop('result_image', None)
+        self.return_type_icon = kwargs.pop('return_type_icon', False)
+        widget = kwargs.pop('widget', None)
+        if widget:
+            self.widget = widget(upload_to=upload_to)
+        else:
+            self.widget = AjaxFileEditor(upload_to=upload_to)
         super(AjaxFileField, self).__init__(*args, **kwargs)
 
     def get_internal_type(self):
@@ -24,6 +32,8 @@ class AjaxFileField(Field):
 class AjaxImageField(AjaxFileField):
     def __init__(self, *args, **kwargs):
         upload_to = kwargs.pop('upload_to', '')
+        self.result_image = kwargs.pop('result_image', None)
+        self.return_type_icon = kwargs.pop('return_type_icon', False)
         max_height = kwargs.pop('max_height', 0)
         max_width = kwargs.pop('max_width', 0)
         crop = kwargs.pop('crop', False)
@@ -33,10 +43,15 @@ class AjaxImageField(AjaxFileField):
             raise Exception(
                 'Both max_width and max_height are needed if cropping')
 
-        self.widget = AjaxImageEditor(upload_to=upload_to,
-                                      max_width=max_width,
-                                      max_height=max_height,
-                                      crop=crop)
+        widget = kwargs.pop('widget', None)
+        if widget:
+            self.widget = widget(upload_to=upload_to, max_width=max_width,
+                                 max_height=max_height, crop=crop)
+        else:
+            self.widget = AjaxImageEditor(upload_to=upload_to,
+                                          max_width=max_width,
+                                          max_height=max_height,
+                                          crop=crop)
 
         super(AjaxImageField, self).__init__(*args, **kwargs)
 
