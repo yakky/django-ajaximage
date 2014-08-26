@@ -40,6 +40,7 @@ class AjaxFileEditor(widgets.TextInput):
     type = 'file'
     template = HTML_TEXT
     remove_label = _(u'Remove')
+    result_image = None
 
     class Media:
         js = (
@@ -59,6 +60,7 @@ class AjaxFileEditor(widgets.TextInput):
     def __init__(self, *args, **kwargs):
         self.upload_to = kwargs.pop('upload_to', '')
         self.show_icon = kwargs.pop('show_icon', False)
+        self.result_image = kwargs.pop('result_image', None)
         self.kwargs = {'upload_to': self.upload_to}
         super(AjaxFileEditor, self).__init__(*args, **kwargs)
 
@@ -74,9 +76,8 @@ class AjaxFileEditor(widgets.TextInput):
             file_url = file_path
 
         file_name = os.path.basename(file_url)
-
         if self.show_icon:
-            template = HTML_IMG
+            template = HTML_IMG.replace('file_url', 'result_image')
         else:
             template = self.template
         output = template.format(upload_url=upload_url,
@@ -84,6 +85,7 @@ class AjaxFileEditor(widgets.TextInput):
                                  file_name=file_name,
                                  file_path=file_path,
                                  element_id=element_id,
+                                 result_image=self.result_image,
                                  remove_label=force_unicode(self.remove_label),
                                  type=self.type,
                                  name=name)

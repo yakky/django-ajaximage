@@ -19,7 +19,7 @@ $(function(){
             return alert('Incorrect image format. Allowed (jpg, gif, png).')
           }
         }
-
+        $('.ajaximage-button').attr('disabled', '1')
         data.submit()
       },
 
@@ -39,6 +39,7 @@ $(function(){
         $(el).attr('class', 'ajaximage img-active')
         $(el).find('input[type=hidden]').val(data.result.filename)
         $(el).find('.bar').css({width: '0%'})
+          $('.ajaximage-button').removeAttr('disabled')
       }
     })
   };

@@ -15,9 +15,11 @@ class AjaxFileField(Field):
         self.return_type_icon = kwargs.pop('return_type_icon', False)
         widget = kwargs.pop('widget', None)
         if widget:
-            self.widget = widget(upload_to=upload_to)
+            self.widget = widget(upload_to=upload_to,
+                                 result_image=self.result_image)
         else:
-            self.widget = AjaxFileEditor(upload_to=upload_to)
+            self.widget = AjaxFileEditor(upload_to=upload_to,
+                                         result_image=self.result_image)
         super(AjaxFileField, self).__init__(*args, **kwargs)
 
     def get_internal_type(self):
